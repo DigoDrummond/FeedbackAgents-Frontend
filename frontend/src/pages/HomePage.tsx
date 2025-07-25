@@ -5,13 +5,11 @@ import {
   loadUserSessions,
   loadSession,
   sendMessage,
-  createNewSession,
   updateSessionTitle,
   deleteSession,
 } from '../components/Home/ChatActions';
 import {
   setInputMessage,
-  clearError,
   selectSession,
   clearCurrentSession,
   startEditingSession,
@@ -140,7 +138,7 @@ const HomePage: React.FC = () => {
           backgroundColor: '#f8f9fa',
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h2 style={{ margin: 0, fontSize: '1.2rem' }}>FeedbackAgents</h2>
+            <h2 style={{ margin: 0, fontSize: '1.2rem' }}>SOLIRIS</h2>
             <button 
               onClick={handleLogout}
               style={{
@@ -156,9 +154,6 @@ const HomePage: React.FC = () => {
               Sair
             </button>
           </div>
-          <p style={{ margin: 0, fontSize: '0.9rem', color: '#6c757d' }}>
-            Olá, {user?.first_name || user?.username}!
-          </p>
         </div>
 
         {/* Botão nova conversa */}
@@ -390,8 +385,8 @@ const HomePage: React.FC = () => {
               color: '#6c757d',
             }}>
               <div>
-                <h3>Bem-vindo ao FeedbackAgents!</h3>
-                <p>Selecione uma conversa existente ou inicie uma nova para começar a conversar com nossos agentes inteligentes.</p>
+                <h3>Bem-vindo!</h3>
+                <p>Selecione uma conversa existente ou inicie uma nova para começar a conversar com nossos agentes.</p>
               </div>
             </div>
           ) : (
@@ -443,7 +438,7 @@ const HomePage: React.FC = () => {
                     backgroundColor: '#f8f9fa',
                     color: '#6c757d',
                   }}>
-                    Agente está digitando...
+                    ...
                   </div>
                 </div>
               )}
