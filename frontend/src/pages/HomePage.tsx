@@ -21,7 +21,6 @@ import {
 
 const HomePage: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.auth);
   const { 
     currentSessionId,
     currentMessages,
