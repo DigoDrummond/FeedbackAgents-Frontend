@@ -152,7 +152,6 @@ const HomePage: React.FC = () => {
             </div>
           ) : (
             userSessions.map((session: Session) => {
-              const isEditing = editingSessionId === session.id;
               
               return (
                 <div
