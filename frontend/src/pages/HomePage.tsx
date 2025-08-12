@@ -47,6 +47,18 @@ const HomePage: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [currentMessages]);
 
+  // useEffect para recarregar sessões quando uma nova sessão é criada
+  useEffect(() => {
+    // Recarregar sessões quando termina o envio de uma mensagem e temos uma sessão atual
+    // mas ela não está na lista de sessões (indica que foi criada uma nova sessão)
+    if (!isSendingMessage && currentSessionId) {
+      const sessionExists = userSessions.some(session => session.id === currentSessionId);
+      if (!sessionExists && !isLoadingSessions) {
+        dispatch(loadUserSessions());
+      }
+    }
+  }, [isSendingMessage, currentSessionId, userSessions, isLoadingSessions, dispatch]);
+
   const handleLogout = () => {
     dispatch(logout());
   };
@@ -152,6 +164,7 @@ const HomePage: React.FC = () => {
             </div>
           ) : (
             userSessions.map((session: Session) => {
+              const isEditing = editingSessionId === session.id;
               
               return (
                 <div
