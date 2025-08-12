@@ -18,6 +18,7 @@ import {
   Session,
   Message,
 } from '../components/Home/ChatSlice';
+import './HomePage.css';
 
 const HomePage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -117,85 +118,36 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div style={{ 
-      minHeight: '100vh',
-      display: 'flex',
-      backgroundColor: '#f8f9fa'
-    }}>
+    <div className="home-container">
       {/* Sidebar com sessões */}
-      <div style={{
-        width: '320px',
-        backgroundColor: '#fff',
-        borderRight: '1px solid #dee2e6',
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
+      <div className="sidebar">
         {/* Header do sidebar */}
-        <div style={{
-          padding: '1rem',
-          borderBottom: '1px solid #dee2e6',
-          backgroundColor: '#f8f9fa',
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-            <h2 style={{ margin: 0, fontSize: '1.2rem' }}>SOLIRIS</h2>
-            <button 
-              onClick={handleLogout}
-              style={{
-                padding: '0.25rem 0.5rem',
-                backgroundColor: '#dc3545',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                fontSize: '0.8rem'
-              }}
-            >
+        <div className="sidebar-header">
+          <div className="sidebar-header-content">
+            <h2 className="sidebar-title">SOLIRIS</h2>
+            <button onClick={handleLogout} className="logout-button">
               Sair
             </button>
           </div>
         </div>
 
         {/* Botão nova conversa */}
-        <div style={{ padding: '1rem' }}>
-          <button
-            onClick={handleNewChat}
-            style={{
-              width: '100%',
-              padding: '0.75rem',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '1rem',
-              fontWeight: 'bold',
-            }}
-          >
-            + Nova Conversa
+        <div className="new-chat-container">
+          <button onClick={handleNewChat} className="new-chat-button">
+            ✨ Nova Conversa
           </button>
         </div>
 
         {/* Lista de sessões */}
-        <div style={{ 
-          flex: 1, 
-          overflowY: 'auto',
-          padding: '0 1rem 1rem'
-        }}>
+        <div className="sessions-container">
           {error && (
-            <div style={{
-              padding: '0.5rem',
-              backgroundColor: '#f8d7da',
-              color: '#721c24',
-              borderRadius: '4px',
-              marginBottom: '1rem',
-              fontSize: '0.9rem'
-            }}>
+            <div className="error-message">
               {error}
             </div>
           )}
 
           {isLoadingSessions ? (
-            <div style={{ textAlign: 'center', color: '#6c757d' }}>
+            <div className="loading-message">
               Carregando sessões...
             </div>
           ) : (
@@ -205,193 +157,91 @@ const HomePage: React.FC = () => {
               return (
                 <div
                   key={session.id}
-                  style={{
-                    padding: '0.75rem',
-                    marginBottom: '0.5rem',
-                    backgroundColor: currentSessionId === session.id ? '#e3f2fd' : '#f8f9fa',
-                    borderRadius: '8px',
-                    border: currentSessionId === session.id ? '2px solid #2196f3' : '1px solid #dee2e6',
-                    transition: 'all 0.2s',
-                    position: 'relative',
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!isEditing) {
-                      const buttons = e.currentTarget.querySelector('.session-buttons') as HTMLElement;
-                      if (buttons) buttons.style.opacity = '1';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!isEditing) {
-                      const buttons = e.currentTarget.querySelector('.session-buttons') as HTMLElement;
-                      if (buttons) buttons.style.opacity = '0';
-                    }
-                  }}
+                  className={`session-card ${currentSessionId === session.id ? 'active' : ''}`}
                 >
-                {/* Área principal da sessão */}
-                <div
-                  onClick={() => editingSessionId !== session.id && handleSelectSession(session.id)}
-                  style={{
-                    cursor: editingSessionId === session.id ? 'default' : 'pointer',
-                  }}
-                >
-                  {/* Título editável */}
+                  {/* Área principal da sessão */}
+                  <div
+                    className="session-content"
+                    onClick={() => editingSessionId !== session.id && handleSelectSession(session.id)}
+                  >
+                    {/* Título editável */}
+                    {editingSessionId === session.id ? (
+                      <input
+                        type="text"
+                        value={editingSessionTitle}
+                        onChange={(e) => dispatch(updateEditingTitle(e.target.value))}
+                        onKeyPress={handleEditKeyPress}
+                        onBlur={handleSaveEdit}
+                        autoFocus
+                        className="session-edit-input"
+                      />
+                    ) : (
+                      <div className="session-title">
+                        {session.titulo}
+                      </div>
+                    )}
+                    
+                    <div className="session-meta">
+                      {session.quantidade_mensagens} mensagens • {formatDate(session.data_atualizacao)}
+                    </div>
+                  </div>
+
+                  {/* Botões de ação */}
                   {editingSessionId === session.id ? (
-                    <input
-                      type="text"
-                      value={editingSessionTitle}
-                      onChange={(e) => dispatch(updateEditingTitle(e.target.value))}
-                      onKeyPress={handleEditKeyPress}
-                      onBlur={handleSaveEdit}
-                      autoFocus
-                      style={{
-                        width: '100%',
-                        padding: '0.25rem',
-                        fontSize: '0.9rem',
-                        fontWeight: 'bold',
-                        border: '1px solid #007bff',
-                        borderRadius: '4px',
-                        backgroundColor: 'white',
-                        marginBottom: '0.25rem',
-                      }}
-                    />
+                    <div className="session-buttons" style={{ opacity: 1 }}>
+                      <button onClick={handleSaveEdit} className="session-action-button save">
+                        ✓
+                      </button>
+                      <button onClick={handleCancelEdit} className="session-action-button cancel">
+                        ✕
+                      </button>
+                    </div>
                   ) : (
-                    <div style={{ fontWeight: 'bold', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
-                      {session.titulo}
+                    <div className="session-buttons">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleStartEdit(session.id, session.titulo);
+                        }}
+                        className="session-action-button edit"
+                        title="Editar nome"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteSession(session.id);
+                        }}
+                        className="session-action-button delete"
+                        title="Deletar conversa"
+                      >
+                        🗑️
+                      </button>
                     </div>
                   )}
-                  
-                  <div style={{ fontSize: '0.8rem', color: '#6c757d' }}>
-                    {session.quantidade_mensagens} mensagens • {formatDate(session.data_atualizacao)}
-                  </div>
                 </div>
-
-                {/* Botões de ação */}
-                {editingSessionId === session.id ? (
-                  <div style={{
-                    position: 'absolute',
-                    top: '0.5rem',
-                    right: '0.5rem',
-                    display: 'flex',
-                    gap: '0.25rem',
-                  }}>
-                    <button
-                      onClick={handleSaveEdit}
-                      style={{
-                        padding: '0.25rem 0.5rem',
-                        backgroundColor: '#28a745',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '0.7rem',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      ✓
-                    </button>
-                    <button
-                      onClick={handleCancelEdit}
-                      style={{
-                        padding: '0.25rem 0.5rem',
-                        backgroundColor: '#6c757d',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '0.7rem',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                                 ) : (
-                   <div 
-                     className="session-buttons"
-                     style={{
-                       position: 'absolute',
-                       top: '0.5rem',
-                       right: '0.5rem',
-                       display: 'flex',
-                       gap: '0.25rem',
-                       opacity: 0,
-                       transition: 'opacity 0.2s',
-                     }}
-                   >
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleStartEdit(session.id, session.titulo);
-                      }}
-                      style={{
-                        padding: '0.25rem 0.5rem',
-                        backgroundColor: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '0.7rem',
-                        cursor: 'pointer',
-                      }}
-                      title="Editar nome"
-                    >
-                      ✏️
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteSession(session.id);
-                      }}
-                      style={{
-                        padding: '0.25rem 0.5rem',
-                        backgroundColor: '#dc3545',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px',
-                        fontSize: '0.7rem',
-                        cursor: 'pointer',
-                      }}
-                      title="Deletar conversa"
-                    >
-                      🗑️
-                    </button>
-                                     </div>
-                 )}
-              </div>
-                );
-              })
+              );
+            })
           )}
         </div>
       </div>
 
       {/* Área principal do chat */}
-      <div style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
+      <div className="chat-main">
         {/* Área de mensagens */}
-        <div style={{
-          flex: 1,
-          padding: '1rem',
-          overflowY: 'auto',
-          backgroundColor: '#fff',
-        }}>
+        <div className="messages-area">
           {currentMessages.length === 0 && !currentSessionId ? (
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-              textAlign: 'center',
-              color: '#6c757d',
-            }}>
-              <div>
-                <h3>Bem-vindo!</h3>
-                <p>Selecione uma conversa existente ou inicie uma nova para começar a conversar com nossos agentes.</p>
+            <div className="empty-state">
+              <div className="empty-state-content">
+                <h3>Bem-vindo ao SOLIRIS! 🚀</h3>
+                <p>Selecione uma conversa existente ou inicie uma nova para começar a conversar com nossos agentes de IA especializados.</p>
               </div>
             </div>
           ) : (
             <>
               {isLoadingMessages && (
-                <div style={{ textAlign: 'center', color: '#6c757d', marginBottom: '1rem' }}>
+                <div className="loading-message">
                   Carregando mensagens...
                 </div>
               )}
@@ -399,30 +249,13 @@ const HomePage: React.FC = () => {
               {currentMessages.map((message: Message, index: number) => (
                 <div
                   key={`${message.id}-${index}`}
-                  style={{
-                    display: 'flex',
-                    justifyContent: message.remetente === 'user' ? 'flex-end' : 'flex-start',
-                    marginBottom: '1rem',
-                  }}
+                  className={`message-container ${message.remetente}`}
                 >
-                  <div
-                    style={{
-                      maxWidth: '70%',
-                      padding: '0.75rem 1rem',
-                      borderRadius: '18px',
-                      backgroundColor: message.remetente === 'user' ? '#007bff' : '#f8f9fa',
-                      color: message.remetente === 'user' ? 'white' : '#333',
-                      wordWrap: 'break-word',
-                    }}
-                  >
-                    <div style={{ whiteSpace: 'pre-wrap' }}>
+                  <div className={`message-bubble ${message.remetente}`}>
+                    <div className="message-content">
                       {message.conteudo}
                     </div>
-                    <div style={{
-                      fontSize: '0.7rem',
-                      marginTop: '0.25rem',
-                      opacity: 0.7,
-                    }}>
+                    <div className="message-timestamp">
                       {formatDate(message.timestamp)}
                     </div>
                   </div>
@@ -430,14 +263,9 @@ const HomePage: React.FC = () => {
               ))}
               
               {isSendingMessage && (
-                <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '1rem' }}>
-                  <div style={{
-                    padding: '0.75rem 1rem',
-                    borderRadius: '18px',
-                    backgroundColor: '#f8f9fa',
-                    color: '#6c757d',
-                  }}>
-                    ...
+                <div className="loading-indicator">
+                  <div className="loading-bubble">
+                    Pensando...
                   </div>
                 </div>
               )}
@@ -448,52 +276,23 @@ const HomePage: React.FC = () => {
         </div>
 
         {/* Área de input */}
-        <div style={{
-          padding: '1rem',
-          backgroundColor: '#f8f9fa',
-          borderTop: '1px solid #dee2e6',
-        }}>
-          <div style={{
-            display: 'flex',
-            gap: '0.5rem',
-            alignItems: 'flex-end',
-          }}>
+        <div className="input-area">
+          <div className="input-container">
             <textarea
               value={inputMessage}
               onChange={(e) => dispatch(setInputMessage(e.target.value))}
               onKeyPress={handleKeyPress}
-              placeholder="Digite sua mensagem aqui..."
+              placeholder="Digite sua mensagem aqui... ✨"
               disabled={isSendingMessage}
-              style={{
-                flex: 1,
-                padding: '0.75rem',
-                border: '1px solid #dee2e6',
-                borderRadius: '20px',
-                resize: 'none',
-                minHeight: '44px',
-                maxHeight: '120px',
-                fontFamily: 'inherit',
-                fontSize: '1rem',
-                outline: 'none',
-              }}
+              className="message-input"
               rows={1}
             />
             <button
               onClick={handleSendMessage}
               disabled={!inputMessage.trim() || isSendingMessage}
-              style={{
-                padding: '0.75rem 1.5rem',
-                backgroundColor: !inputMessage.trim() || isSendingMessage ? '#6c757d' : '#007bff',
-                color: 'white',
-                border: 'none',
-                borderRadius: '20px',
-                cursor: !inputMessage.trim() || isSendingMessage ? 'not-allowed' : 'pointer',
-                fontSize: '1rem',
-                fontWeight: 'bold',
-                minWidth: '80px',
-              }}
+              className="send-button"
             >
-              {isSendingMessage ? '...' : 'Enviar'}
+              {isSendingMessage ? '📤' : 'Enviar'}
             </button>
           </div>
         </div>
