@@ -1,7 +1,7 @@
 // @ts-nocheck
 import axios from 'axios';
 
-const API_URL = 'https://feedback-backend-f5gqena4dahbbafm.eastus2-01.azurewebsites.net';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 const api = axios.create({
   baseURL: API_URL,
